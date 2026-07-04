@@ -7,21 +7,13 @@
 
 WiFiManager WiFiMgr;
 
+//==================================================
+// Initialize WiFi
+//==================================================
+
 void WiFiManager::begin()
 {
-    Display.clear();
-
-    Display.drawHeader("--:--", false);
-
-    auto &oled = Display.oled();
-
-    oled.setFont(u8g2_font_helvB10_tf);
-
-    oled.drawStr(8, 32, "Connecting");
-
-    oled.drawStr(8, 48, "WiFi...");
-
-    Display.update();
+    Display.drawConnectingScreen();
 
     WiFi.mode(WIFI_STA);
 
@@ -29,6 +21,8 @@ void WiFiManager::begin()
         WIFI_SSID,
         WIFI_PASSWORD
     );
+
+    Serial.print("Connecting to WiFi");
 
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -38,36 +32,32 @@ void WiFiManager::begin()
     }
 
     Serial.println();
+    Serial.println("WiFi connected");
 
-    Serial.println("WiFi Connected");
+    String ip = WiFi.localIP().toString();
 
-    Serial.println(WiFi.localIP());
+    Serial.print("IP: ");
+    Serial.println(ip);
 
-    Display.clear();
-
-    Display.drawHeader("--:--", true);
-
-    oled.setFont(u8g2_font_helvB10_tf);
-
-    oled.drawStr(8, 28, "WiFi Connected");
-
-    oled.setFont(u8g2_font_6x12_tf);
-
-    oled.drawUTF8(
-        8,
-        48,
-        WiFi.localIP().toString().c_str()
+    Display.drawIPAddress(
+        ip.c_str()
     );
-
-    Display.update();
 
     delay(1500);
 }
+
+//==================================================
+// WiFi loop
+//==================================================
 
 void WiFiManager::loop()
 {
 
 }
+
+//==================================================
+// Connection state
+//==================================================
 
 bool WiFiManager::connected()
 {

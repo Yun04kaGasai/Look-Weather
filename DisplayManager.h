@@ -1,29 +1,48 @@
 #pragma once
 
+#include <Arduino.h>
 #include <U8g2lib.h>
 
 class DisplayManager
 {
 public:
 
+    // Initialize OLED
     void begin();
 
+    // Boot logo
     void bootScreen();
 
+    // Display self test
     void selfTest();
 
-    void readyScreen();
+    // WiFi screens
+    void drawConnectingScreen();
 
+    void drawIPAddress(
+        const char* ip);
+
+    // Main screen
+    void drawReadyScreen(
+        const char* time,
+        bool wifi);
+
+    // Buffer control
     void clear();
 
     void update();
 
+private:
+
+    // Draw top status bar
     void drawHeader(
         const char* time,
         bool wifi);
 
-    U8G2_SSD1306_128X64_NONAME_F_HW_I2C&
-    oled();
+    // Draw centered text
+    void drawCentered(
+        const char* text,
+        int y);
 
 private:
 

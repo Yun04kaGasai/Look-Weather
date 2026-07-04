@@ -6,6 +6,7 @@
 #include "config.h"
 #include "DisplayManager.h"
 #include "WiFiManager.h"
+#include "ClockManager.h"
 
 void App::begin()
 {
@@ -28,10 +29,17 @@ void App::begin()
 
     WiFiMgr.begin();
 
-    Display.readyScreen();
+    Clock.begin();
 }
 
 void App::loop()
 {
     WiFiMgr.loop();
+
+    Clock.loop();
+
+    Display.drawReadyScreen(
+        Clock.getTime(),
+        WiFiMgr.connected()
+    );
 }
