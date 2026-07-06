@@ -7,6 +7,11 @@
 #include "DisplayManager.h"
 #include "WiFiManager.h"
 #include "ClockManager.h"
+#include "OTAManager.h"
+
+//==================================================
+// Initialize application
+//==================================================
 
 void App::begin()
 {
@@ -17,26 +22,38 @@ void App::begin()
         OLED_SCL
     );
 
+    // Initialize display
     Display.begin();
 
     Display.bootScreen();
-
     delay(1500);
 
     Display.selfTest();
-
     delay(2500);
 
+    // Connect to WiFi
     WiFiMgr.begin();
 
+    // Initialize clock
     Clock.begin();
+
+    // Initialize OTA
+    OTA.begin();
+
+    Serial.println("Application started");
 }
+
+//==================================================
+// Main loop
+//==================================================
 
 void App::loop()
 {
     WiFiMgr.loop();
 
     Clock.loop();
+
+    OTA.loop();
 
     Display.drawReadyScreen(
         Clock.getTime(),
