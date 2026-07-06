@@ -1,4 +1,5 @@
 #include "OTAManager.h"
+#include "DisplayManager.h"
 
 #include <Arduino.h>
 
@@ -35,6 +36,45 @@ void OTAManager::begin()
     });
 
     ElegantOTA.begin(&server);
+    //--------------------------------------------------
+    // OTA callbacks
+    //--------------------------------------------------
+
+    ElegantOTA.onStart([]()
+    {
+        OTA.updating = true;
+
+        Serial.println("OTA Update Started");
+
+        Display.drawOTAProgress(0);
+    });
+
+    ElegantOTA.onProgress([](size_t current, size_t final)
+    {
+        uint8_t progress = (current * 100) / final;
+
+        Display.drawOTAProgress(progress);
+    });
+
+    ElegantOTA.onEnd([](bool success)
+    {
+        OTA.updating = false;
+
+        if (success)
+        {
+            Serial.println("OTA Update Complete");
+
+            Display.drawOTASuccess();
+        }
+        else
+        {
+            Serial.println("OTA Update Failed");
+
+            Display.drawOTAError();
+        }
+
+        delay(2000);
+    });
 
     server.begin();
 
@@ -49,4 +89,9 @@ void OTAManager::begin()
 void OTAManager::loop()
 {
     // Async server doesn't require polling
+}
+
+bool OTAManager::isUpdating() const
+{
+    return updating;
 }

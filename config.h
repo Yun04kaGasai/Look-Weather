@@ -1,36 +1,39 @@
 #pragma once
 
-//=========================
-// OLED
-//=========================
+//==================================================
+// Firmware information
+//==================================================
 
-#define OLED_SDA 6
-#define OLED_SCL 7
+#define FW_NAME            "Weather Station"
+#define FW_VERSION         "0.4.1"
+#define DEVICE_NAME        "weather-station"
 
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-
-//=========================
+//==================================================
 // WiFi
-//=========================
+//==================================================
 
-#define WIFI_SSID       ""
-#define WIFI_PASSWORD   ""
+#define WIFI_SSID          ""
+#define WIFI_PASSWORD      ""
 
-//=========================
-// OpenWeather
-//=========================
+//==================================================
+// OLED
+//==================================================
 
-#define API_KEY ""
+#define OLED_SDA           6
+#define OLED_SCL           7
 
-#define CITY "Moscow"
-
-#define COUNTRY "RU"
-
-//=========================
+//==================================================
 // Time
-//=========================
+//==================================================
 
-#define GMT_OFFSET 3 * 3600
+#define GMT_OFFSET         10800
+#define DST_OFFSET         0
 
-#define DST_OFFSET 0
+//==================================================
+// OpenWeather
+// (will be used in v0.5)
+//==================================================
+
+#define WEATHER_API_KEY    ""
+#define WEATHER_LAT        "0.0000"
+#define WEATHER_LON        "0.0000"

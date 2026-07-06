@@ -10,10 +10,9 @@ public:
     // Initialize OLED
     void begin();
 
-    // Boot logo
+    // Boot screens
     void bootScreen();
 
-    // Display self test
     void selfTest();
 
     // WiFi screens
@@ -27,6 +26,14 @@ public:
         const char* time,
         bool wifi);
 
+    // OTA screens
+    void drawOTAProgress(
+        uint8_t progress);
+
+    void drawOTASuccess();
+
+    void drawOTAError();
+
     // Buffer control
     void clear();
 
@@ -34,7 +41,7 @@ public:
 
 private:
 
-    // Draw top status bar
+    // Draw top header
     void drawHeader(
         const char* time,
         bool wifi);
@@ -43,6 +50,14 @@ private:
     void drawCentered(
         const char* text,
         int y);
+
+    // Draw progress bar
+    void drawProgressBar(
+        int x,
+        int y,
+        int width,
+        int height,
+        uint8_t percent);
 
 private:
 

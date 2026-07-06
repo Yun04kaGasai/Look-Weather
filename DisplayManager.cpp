@@ -3,7 +3,7 @@
 DisplayManager Display;
 
 //==================================================
-// Initialize OLED
+// Initialize display
 //==================================================
 
 void DisplayManager::begin()
@@ -13,7 +13,6 @@ void DisplayManager::begin()
     display.enableUTF8Print();
 
     display.clearBuffer();
-
     display.sendBuffer();
 }
 
@@ -63,7 +62,7 @@ void DisplayManager::selfTest()
 }
 
 //==================================================
-// Connecting screen
+// WiFi connecting screen
 //==================================================
 
 void DisplayManager::drawConnectingScreen()
@@ -127,6 +126,122 @@ void DisplayManager::drawReadyScreen(
 }
 
 //==================================================
+// OTA progress screen
+//==================================================
+
+void DisplayManager::drawOTAProgress(
+    uint8_t progress)
+{
+    display.clearBuffer();
+
+    display.setFont(u8g2_font_6x12_tf);
+
+    display.drawStr(2, 10, "OTA Update");
+
+    display.drawHLine(0, 13, 128);
+
+    display.setFont(u8g2_font_helvB10_tf);
+
+    drawCentered("Updating...", 30);
+
+    char percent[8];
+
+    snprintf(
+        percent,
+        sizeof(percent),
+        "%u%%",
+        progress);
+
+    drawCentered(percent, 46);
+
+    drawProgressBar(
+        14,
+        52,
+        100,
+        8,
+        progress);
+
+    display.sendBuffer();
+}
+
+//==================================================
+// OTA success screen
+//==================================================
+
+void DisplayManager::drawOTASuccess()
+{
+    display.clearBuffer();
+
+    display.setFont(u8g2_font_6x12_tf);
+
+    display.drawStr(2, 10, "OTA Update");
+
+    display.drawHLine(0, 13, 128);
+
+    display.setFont(u8g2_font_helvB10_tf);
+
+    drawCentered("Update Complete", 34);
+
+    display.setFont(u8g2_font_6x12_tf);
+
+    drawCentered("Rebooting...", 54);
+
+    display.sendBuffer();
+}
+
+//==================================================
+// OTA error screen
+//==================================================
+
+void DisplayManager::drawOTAError()
+{
+    display.clearBuffer();
+
+    display.setFont(u8g2_font_6x12_tf);
+
+    display.drawStr(2, 10, "OTA Update");
+
+    display.drawHLine(0, 13, 128);
+
+    display.setFont(u8g2_font_helvB10_tf);
+
+    drawCentered("Update Failed", 34);
+
+    display.setFont(u8g2_font_6x12_tf);
+
+    drawCentered("Please try again", 54);
+
+    display.sendBuffer();
+}
+
+//==================================================
+// Draw progress bar
+//==================================================
+
+void DisplayManager::drawProgressBar(
+    int x,
+    int y,
+    int width,
+    int height,
+    uint8_t percent)
+{
+    display.drawFrame(
+        x,
+        y,
+        width,
+        height);
+
+    int fillWidth =
+        (width - 2) * percent / 100;
+
+    display.drawBox(
+        x + 1,
+        y + 1,
+        fillWidth,
+        height - 2);
+}
+
+//==================================================
 // Draw header
 //==================================================
 
@@ -140,6 +255,8 @@ void DisplayManager::drawHeader(
 
     if (wifi)
     {
+        // WiFi signal icon
+
         display.drawBox(111, 7, 2, 3);
 
         display.drawBox(115, 5, 2, 5);
@@ -149,7 +266,10 @@ void DisplayManager::drawHeader(
         display.drawBox(123, 1, 2, 9);
     }
 
-    display.drawHLine(0, 13, 128);
+    display.drawHLine(
+        0,
+        13,
+        128);
 }
 
 //==================================================
@@ -160,7 +280,8 @@ void DisplayManager::drawCentered(
     const char* text,
     int y)
 {
-    int width = display.getUTF8Width(text);
+    int width =
+        display.getUTF8Width(text);
 
     display.drawUTF8(
         (128 - width) / 2,
@@ -169,7 +290,7 @@ void DisplayManager::drawCentered(
 }
 
 //==================================================
-// Clear buffer
+// Clear display buffer
 //==================================================
 
 void DisplayManager::clear()
@@ -178,7 +299,7 @@ void DisplayManager::clear()
 }
 
 //==================================================
-// Send buffer
+// Send buffer to display
 //==================================================
 
 void DisplayManager::update()

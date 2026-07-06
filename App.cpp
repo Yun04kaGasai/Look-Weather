@@ -55,8 +55,11 @@ void App::loop()
 
     OTA.loop();
 
-    Display.drawReadyScreen(
-        Clock.getTime(),
-        WiFiMgr.connected()
-    );
+    if (!OTA.isUpdating())
+    {
+        Display.drawReadyScreen(
+            Clock.getTime(),
+            WiFiMgr.connected()
+        );
+    }
 }
