@@ -8,7 +8,7 @@
 - [x] OLED Display
 - [x] Wi-Fi
 - [x] NTP Clock
-- [ ] OTA Update
+- [x] OTA Update
 - [ ] Current Weather
 - [ ] Forecast
 - [ ] Temperature Graph
