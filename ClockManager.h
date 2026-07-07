@@ -3,6 +3,9 @@
 class ClockManager
 {
 public:
+    int getHour() const;
+
+    int getMinute() const;
 
     void begin();
 
@@ -13,6 +16,10 @@ public:
 private:
 
     char timeString[6] = "--:--";
+
+    int hour = 0;
+
+    int minute = 0;
 
     unsigned long lastUpdate = 0;
 };

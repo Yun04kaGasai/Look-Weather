@@ -9,11 +9,11 @@
 - [x] Wi-Fi
 - [x] NTP Clock
 - [x] OTA Update
-- [ ] Current Weather
-- [ ] Forecast
-- [ ] Temperature Graph
-- [ ] Rain Probability
-
+- [x] Current Weather
+- [x] Forecast
+- [x] Temperature Graph
+- [x] Rain Probability
+- [x] Sleep Mode
 
 
 ## Hardware
@@ -37,7 +37,7 @@
 
 ```text
 ┌──────────────────────────────┐
-│ 18:42                    📶 │
+│ 18:42                     📶 │
 ├──────────────────────────────┤
 │ Tomorrow                     │
 │                              │

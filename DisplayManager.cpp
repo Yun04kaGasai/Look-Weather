@@ -1,4 +1,5 @@
 #include "DisplayManager.h"
+#include <Wire.h>
 
 DisplayManager Display;
 
@@ -8,6 +9,8 @@ DisplayManager Display;
 
 void DisplayManager::begin()
 {
+    Wire.begin(6, 7);
+
     display.begin();
 
     display.enableUTF8Print();
@@ -215,6 +218,198 @@ void DisplayManager::drawOTAError()
 }
 
 //==================================================
+// Current weather screen (U8g2)
+//==================================================
+
+void DisplayManager::drawCurrentWeather(
+    const char* time,
+    float temperature,
+    const String& description
+)
+{
+    display.clearBuffer();
+
+    drawHeader(time, true);
+
+    // Temperature (big font)
+    display.setFont(u8g2_font_10x20_t_cyrillic);
+
+    char tempStr[8];
+    snprintf(tempStr, sizeof(tempStr), "%d°", (int)temperature);
+
+    drawCentered(tempStr, 38);
+
+    // Description
+    display.setFont(u8g2_font_6x12_t_cyrillic);
+    drawCentered(description.c_str(), 58);
+
+    display.sendBuffer();
+}
+
+//==================================================
+// Min / Max screen (U8g2)
+//==================================================
+
+void DisplayManager::drawMinMax(
+    const char* time,
+    float minTemp,
+    float maxTemp
+)
+{
+    display.clearBuffer();
+
+    drawHeader(time, true);
+
+    display.setFont(u8g2_font_6x12_tf);
+
+    // Min
+    char minStr[16];
+    snprintf(minStr, sizeof(minStr), "Min: %d°", (int)minTemp);
+    display.drawUTF8(10, 32, minStr);
+
+    // Max
+    char maxStr[16];
+    snprintf(maxStr, sizeof(maxStr), "Max: %d°", (int)maxTemp);
+    display.drawUTF8(10, 52, maxStr);
+
+    display.sendBuffer();
+}
+
+//==================================================
+// Rain probability screen (U8g2)
+//==================================================
+
+void DisplayManager::drawRain(
+    const char* time,
+    int rainChance
+)
+{
+    display.clearBuffer();
+
+    drawHeader(time, true);
+
+    display.setFont(u8g2_font_helvB10_tf);
+    drawCentered("Rain chance", 28);
+
+    display.setFont(u8g2_font_logisoso20_tf);
+
+    char value[8];
+    snprintf(value, sizeof(value), "%d%%", rainChance);
+
+    drawCentered(value, 58);
+
+    display.sendBuffer();
+}
+
+//==================================================
+// Temperature graph screen (U8g2)
+//==================================================
+
+void DisplayManager::drawTemperatureGraph(
+    const char* time,
+    const ForecastPoint forecast[],
+    uint8_t count
+)
+{
+    display.clearBuffer();
+
+    drawHeader(time, true);
+
+    if (count < 2)
+    {
+        display.sendBuffer();
+        return;
+    }
+
+    float minTemp = forecast[0].temperature;
+    float maxTemp = forecast[0].temperature;
+
+    for (uint8_t i = 1; i < count; i++)
+    {
+        if (forecast[i].temperature < minTemp)
+            minTemp = forecast[i].temperature;
+
+        if (forecast[i].temperature > maxTemp)
+            maxTemp = forecast[i].temperature;
+    }
+
+    float range = maxTemp - minTemp;
+
+    if (range < 1.0f)
+        range = 1.0f;
+
+    constexpr int graphX = 8;
+    constexpr int graphY = 18;
+    constexpr int graphW = 112;
+    constexpr int graphH = 38;
+
+    for (uint8_t i = 0; i < count - 1; i++)
+    {
+        int x1 = graphX + (graphW * i) / (count - 1);
+        int x2 = graphX + (graphW * (i + 1)) / (count - 1);
+
+        int y1 = graphY + graphH -
+                 ((forecast[i].temperature - minTemp) * graphH / range);
+
+        int y2 = graphY + graphH -
+                 ((forecast[i + 1].temperature - minTemp) * graphH / range);
+
+        display.drawLine(x1, y1, x2, y2);
+
+        // Точки графика
+        display.drawDisc(x1, y1, 2);
+    }
+
+    int lastX = graphX + graphW;
+
+    int lastY = graphY + graphH -
+                ((forecast[count - 1].temperature - minTemp) * graphH / range);
+
+    display.drawDisc(lastX, lastY, 2);
+
+    display.sendBuffer();
+}
+
+//==================================================
+// Forecast screen (U8g2)
+//==================================================
+
+void DisplayManager::drawForecast(
+    const char* time,
+    const ForecastPoint forecast[],
+    uint8_t count
+)
+{
+    display.clearBuffer();
+
+    drawHeader(time, true);
+
+    display.setFont(u8g2_font_6x12_tf);
+
+    uint8_t rows = (count > 4) ? 4 : count;
+
+    for (uint8_t i = 0; i < rows; i++)
+    {
+        int y = 25 + (i * 10);
+
+        char line[32];
+
+        snprintf(
+            line,
+            sizeof(line),
+            "%02u:00  %2d°  %2u%%",
+            forecast[i].hour,
+            (int)forecast[i].temperature,
+            forecast[i].rainChance
+        );
+
+        display.drawUTF8(4, y, line);
+    }
+
+    display.sendBuffer();
+}
+
+//==================================================
 // Draw progress bar
 //==================================================
 
@@ -304,5 +499,29 @@ void DisplayManager::clear()
 
 void DisplayManager::update()
 {
+    display.sendBuffer();
+}
+
+//==================================================
+// Display sleep
+//==================================================
+
+void DisplayManager::sleep()
+{
+    display.clearBuffer();
+    display.sendBuffer();
+
+    display.setPowerSave(1);
+}
+
+//==================================================
+// Display wake
+//==================================================
+
+void DisplayManager::wake()
+{
+    display.setPowerSave(0);
+
+    display.clearBuffer();
     display.sendBuffer();
 }

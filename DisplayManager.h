@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <U8g2lib.h>
+#include "WeatherManager.h"
 
 class DisplayManager
 {
@@ -34,10 +35,53 @@ public:
 
     void drawOTAError();
 
+    //==================================================
+    // Weather screens
+    //==================================================
+
+    // Current weather
+    void drawCurrentWeather(
+        const char* time,
+        float temperature,
+        const String& description
+    );
+
+    // Today's min/max
+    void drawMinMax(
+        const char* time,
+        float minTemp,
+        float maxTemp
+    );
+
+    // Rain probability
+    void drawRain(
+        const char* time,
+        int rainChance
+    );
+
+    // Temperature graph
+    void drawTemperatureGraph(
+        const char* time,
+        const ForecastPoint forecast[],
+        uint8_t count
+    );
+
+    // Forecast list
+    void drawForecast(
+        const char* time,
+        const ForecastPoint forecast[],
+        uint8_t count
+    );
+
     // Buffer control
     void clear();
 
     void update();
+    
+    // Sleep mode
+    void sleep();
+
+    void wake();
 
 private:
 

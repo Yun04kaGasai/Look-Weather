@@ -29,6 +29,9 @@ void ClockManager::loop()
     if (!getLocalTime(&timeinfo))
         return;
 
+    hour = timeinfo.tm_hour;
+    minute = timeinfo.tm_min;
+
     strftime(
         timeString,
         sizeof(timeString),
@@ -40,4 +43,14 @@ void ClockManager::loop()
 const char* ClockManager::getTime()
 {
     return timeString;
+}
+
+int ClockManager::getHour() const
+{
+    return hour;
+}
+
+int ClockManager::getMinute() const
+{
+    return minute;
 }

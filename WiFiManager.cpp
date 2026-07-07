@@ -59,7 +59,12 @@ void WiFiManager::loop()
 // Connection state
 //==================================================
 
-bool WiFiManager::connected()
+bool WiFiManager::connected() const
 {
     return WiFi.status() == WL_CONNECTED;
+}
+
+bool WiFiManager::isConnected() const
+{
+    return connected();
 }

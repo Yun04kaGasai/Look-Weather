@@ -4,11 +4,13 @@ class WiFiManager
 {
 public:
 
+    bool isConnected() const;
+
     void begin();
 
     void loop();
 
-    bool connected();
+    bool connected() const;
 
 };
 
